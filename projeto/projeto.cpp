@@ -7,7 +7,7 @@
 
 struct Aminoacid {
     char type;
-    int energy;
+    long long energy;
 };
 
 int affinity(char aa1, char aa2){
@@ -26,7 +26,7 @@ int affinity(char aa1, char aa2){
     return affinity_map[{aa1, aa2}];
 }
 
-int removal_energy(Aminoacid aa1, Aminoacid aa2, Aminoacid aa3){
+long long removal_energy(Aminoacid aa1, Aminoacid aa2, Aminoacid aa3){
     return aa1.energy *affinity(aa1.type,aa2.type)*aa2.energy + aa2.energy * affinity(aa2.type,aa3.type)*aa3.energy;
 }
 
@@ -44,7 +44,69 @@ int best_removal_energy(std::vector<Aminoacid> chain, int position, int beg, int
     return max(best_removal_energy(chain,,beg,position))
 }
 
+
+
 int main(){
-    char 
+    int n;
+    int size;
+    long long max_energy[n][n];
+    scanf("%d", &n);
+
+    Aminoacid chain[n + 2];
+    char chain_types[n + 2];
+
+    chain[0].type = 'T';
+    chain[0].energy = 1;
+    chain[n + 1].type = 'T';
+    chain[n + 1].energy = 1;
+    
+    for (int i = 1; i < n + 1; i++)
+        scanf("%d", &chain[i].energy);
+
+    scanf("%s", chain_types);
+    for (int i = 0; i < n; i++)
+        chain[i + 1].energy = chain_types[i];
+
+
+    for (int i = 0; i < n; i++) {
+
+        for(int j = 0; j < n - i; j++) {
+            size = i - j + 1;
+
+
+            for (int k = i; k < size; k++) {
+
+
+
+                //max();
+
+            }
+
+
+
+
+        }
+
+
+
+
+    }
+
+
+
+    
+
+    
+
+
+
+
+
+
+
+
+
+
+
     return 0;
 }
