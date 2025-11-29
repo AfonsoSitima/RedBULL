@@ -71,11 +71,20 @@ int main(){
     for (int i = 0; i < n; i++) {
 
         for(int j = 0; j < n - i; j++) {
-            size = i - j + 1;
-
-
-            for (int k = i; k < size; k++) {
-
+            size = i - j +1;
+            if (size<=0) continue;
+            long long energy = 0;
+            for (int k = i; k <= n-size; k++) {
+                if(max_energy[k][k+size-1] != NULL){
+                    energy += max_energy[k][k+size-1];
+                }
+                else if (size == 1){
+                    energy += removal_energy(chain[k], chain[k+1], chain[k + 2]);
+                    max_energy[k][k+size-1] = energy;
+                }
+                else{
+                    //falta calcular para os casos à direita
+                }
 
 
                 //max();
