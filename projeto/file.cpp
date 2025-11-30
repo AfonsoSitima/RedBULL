@@ -17,7 +17,7 @@ struct KeepTrack {
     long long totalEnergy = 0;
 };
 
-int affinity(char aa1, char aa2){
+/*int affinity(char aa1, char aa2){
     static std::map<std::pair<char, char>, int> affinity_map = {
         {{'P', 'P'},  1}, {{'P', 'N'}, 3}, {{'P', 'A'}, 1}, {{'P', 'B'}, 3},
         {{'N', 'P'}, 5}, {{'N', 'N'},  1}, {{'N', 'A'}, 0}, {{'N', 'B'}, 1},
@@ -31,27 +31,41 @@ int affinity(char aa1, char aa2){
         return 0; // Retorna 0 se a combinação não for encontrada
     }
     return affinity_map[{aa1, aa2}];
+}*/
+
+int affinity(char a, char b) {
+    if (a == 'T' || b == 'T') return 1;
+
+    auto val = [](char c) {
+        switch (c) {
+            case 'P': return 0;
+            case 'N': return 1;
+            case 'A': return 2;
+            case 'B': return 3;
+            default:  return -1;
+        }
+    };
+
+    static const int table[4][4] = {
+        {1, 3, 1, 3},
+        {5, 1, 0, 1},
+        {0, 1, 0, 4},
+        {1, 3, 2, 3}
+    };
+
+    int i = val(a);
+    int j = val(b);
+    if (i < 0 || j < 0) return 0;
+    return table[i][j];
 }
+
+
 
 long long removal_energy(Aminoacid aa1, Aminoacid aa2, Aminoacid aa3){
     return aa1.energy *affinity(aa1.type,aa2.type)*aa2.energy + aa2.energy * affinity(aa2.type,aa3.type)*aa3.energy;
 }
 
-/*int best_removal_energy(std::vector<Aminoacid> chain, int position, int beg, int end){
-    Aminoacid terminal;
-    terminal.type = 'T';
-    terminal.energy = 1;
-    if(position - beg<=1){
-        return removal_energy(chain[beg], chain[position], chain[position+1]);
-    }
-    else if (end- position<= 1){
-        return removal_energy(chain[position-1], chain[position], chain[end]);
- 
-    }
-    return max(best_removal_energy(chain,,beg,position))
-}
 
-*/
 std::string mergeLexico(const std::string &a, const std::string &b) {
     std::string res;
     size_t i = 0, j = 0;
@@ -96,7 +110,7 @@ bool ab_less_ba(std::string &a, std::string &b) {
 
 void addSubProblems(KeepTrack* n1, KeepTrack* n2, Aminoacid aa, KeepTrack* result) {
     result->totalEnergy = n1->totalEnergy + n2->totalEnergy + aa.energy;
-    if(n1->allTypes + n2->allTypes <= n2->allTypes + n1->allTypes) {   //caso for lento trocar
+    if(ab_less_ba(n1->allTypes, n2->allTypes)) {   //caso for lento trocar
         result->allTypes = n1->allTypes + n2->allTypes;   
         result->numList = n1->numList + n2->numList;
     }
