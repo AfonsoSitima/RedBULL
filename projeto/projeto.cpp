@@ -156,6 +156,10 @@ int main(){
         }
     }
 
+    if (!max_energy[1][n].numList.empty() && max_energy[1][n].numList.back() == ' ') {
+        max_energy[1][n].numList.pop_back();
+    }
+    
     printf("%lld\n", max_energy[1][n].totalEnergy);
     printf("%s\n", max_energy[1][n].numList.c_str());
     return 0;
