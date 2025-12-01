@@ -4,6 +4,7 @@
 #include <fstream>
 #include <map>
 #include <algorithm>
+#include <climits>
 
 struct Aminoacid {
     char type;
@@ -200,7 +201,7 @@ int main(){
     std::vector<int> result;
     build_order(1, n, choice, result);
     printf("%lld\n", best[1][n]);
-    for (int i = 0; i < result.size(); ++i) {
+    for (int i = 0; i < (int)result.size(); ++i) {
         if (i) printf(" ");
         printf("%d", result[i]);
     }
