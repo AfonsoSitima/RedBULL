@@ -184,6 +184,24 @@ int main(){
                     best_val = curr;
                     best_k = k;
                 }
+                else if (curr == best_val){     //caso seja igual o valor escolhe o k que a ordem é lexicalmente menor
+                    std::vector<int> seq_new;
+                    seq_new.reserve(j - i + 1);
+                    build_order(i, k - 1, choice, seq_new);
+                    build_order(k + 1, j, choice, seq_new);
+                    seq_new.push_back(k);
+
+                    std::vector<int> seq_old;
+                    seq_new.reserve(j - i + 1);
+                    build_order(i, best_k - 1, choice, seq_old);
+                    build_order(best_k + 1, j, choice, seq_old);
+                    seq_new.push_back(best_k);
+                    
+                    if(seq_new < seq_old) {
+                        best_k = k;
+                    }
+                }
+                
             }
             best[i][j] = best_val;
             choice[i][j] = best_k;
