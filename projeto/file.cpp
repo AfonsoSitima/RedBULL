@@ -171,12 +171,8 @@ int main(){
             
 
             for(int k = i; k <= j; k++) {  //mexe na horizontal (escolhe qual é o ultimo a sair)
-                Aminoacid aa;
                 //KeepTrack subComplete;
-                //aa.energy = removal_energy(chain[i - 1], chain[k], chain[j + 1]); //k é a ultima energia a ser removida
-                aa.type = chain[k].type;
-                aa.index = k;
-                
+                //aa.energy = removal_energy(chain[i - 1], chain[k], chain[j + 1]); //k é a ultima energia a ser removida                
                 long long sub1 = (k > i) ? best[i][k - 1] : 0;  //temos que ver qual é lexicalmente menor entre estas duas
                 long long sub2 = (k < j) ? best[k + 1][j] : 0;
 
