@@ -8,7 +8,7 @@
 
 struct Aminoacid {
     char type;
-    long long energy;
+    unsigned long long energy;
     int index;
 };
 
@@ -64,7 +64,7 @@ int affinity(char a, char b) {
 
 
 
-long long removal_energy(Aminoacid aa1, Aminoacid aa2, Aminoacid aa3){
+unsigned long long removal_energy(Aminoacid aa1, Aminoacid aa2, Aminoacid aa3){
     return aa1.energy *affinity(aa1.type,aa2.type)*aa2.energy + aa2.energy * affinity(aa2.type,aa3.type)*aa3.energy;
 }
 
@@ -137,6 +137,8 @@ void build_order(int i, int j, std::vector<std::vector<int>> &choice, std::vecto
 }
 
 
+
+
 int main(){
     int n;
     scanf("%d", &n);
@@ -151,14 +153,14 @@ int main(){
     chain[n + 1].energy = 1;
     
     for (int i = 1; i < n + 1; i++)
-        scanf("%lld", &chain[i].energy);
+        scanf("%llu", &chain[i].energy);
 
     scanf("%s", chain_types.data());
     for (int i = 0; i < n; i++)
         chain[i + 1].type = chain_types[i];
 
     //const long long NEG_INF = LLONG_MIN / 4;
-    std::vector<std::vector<long long>> best(n + 2, std::vector<long long>(n + 2, LLONG_MIN));
+    std::vector<std::vector<unsigned long long>> best(n + 2, std::vector<unsigned long long>(n + 2, 0));
     std::vector<std::vector<int>> choice(n + 2, std::vector<int>(n + 2, -1));
     //isto está a fazer o tamanho da diagonal
     for (int len = 1; len <= n; len++) {  //tamanho da diagonal
@@ -166,21 +168,21 @@ int main(){
 
         for(int i = 1; i + len - 1 <= n; i++) {  //i é o index horizontal e j index vertical
             int j = len + i - 1;   //mexer na diagonal  j - i + 1 = len
-            long long best_val = LLONG_MIN;
+            unsigned long long best_val = 0;
             int best_k = -1;
             
 
             for(int k = i; k <= j; k++) {  //mexe na horizontal (escolhe qual é o ultimo a sair)
                 //KeepTrack subComplete;
                 //aa.energy = removal_energy(chain[i - 1], chain[k], chain[j + 1]); //k é a ultima energia a ser removida                
-                long long sub1 = (k > i) ? best[i][k - 1] : 0;  //temos que ver qual é lexicalmente menor entre estas duas
-                long long sub2 = (k < j) ? best[k + 1][j] : 0;
+                unsigned long long sub1 = (k > i) ? best[i][k - 1] : 0;  //temos que ver qual é lexicalmente menor entre estas duas
+                unsigned long long sub2 = (k < j) ? best[k + 1][j] : 0;
 
-                long long curr = sub1 + sub2 + removal_energy(chain[i - 1], chain[k], chain[j + 1]);
+                unsigned long long curr = sub1 + sub2 + removal_energy(chain[i - 1], chain[k], chain[j + 1]);
 
                 //addSubProblems(&sub1, &sub2, aa, &subComplete);
                 //changeMax(&subComplete, &max_energy[i][j]);
-                if (curr > best_val) {
+                if (curr > best_val || k == i) {
                     best_val = curr;
                     best_k = k;
                 }
@@ -214,7 +216,7 @@ int main(){
     }*/
     std::vector<int> result;
     build_order(1, n, choice, result);
-    printf("%lld\n", best[1][n]);
+    printf("%llu\n", best[1][n]);
     for (int i = 0; i < (int)result.size(); ++i) {
         if (i) printf(" ");
         printf("%d", result[i]);
