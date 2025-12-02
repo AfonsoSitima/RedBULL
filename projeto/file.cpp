@@ -12,6 +12,78 @@ struct Aminoacid {
     int index;
 };
 
+struct IteratorState {
+    int i, j;
+    int k;         // só usado para o nó raiz
+    int stage;     // 0 = antes da esquerda, 1 = depois da esquerda, 2 = depois da direita (pronto a devolver k)
+    bool is_root;  // se é o nó raiz (usa k explícito) ou um nó interno (usa choice[i][j])
+};
+
+
+int next_index(const std::vector<std::vector<int>> &choice, std::vector<IteratorState> &st) {
+    while (!st.empty()) {
+        IteratorState &f = st.back();
+
+        if (f.i > f.j) {
+            st.pop_back();
+            continue;
+        }
+
+        int k = f.is_root ? f.k : choice[f.i][f.j];
+
+        if (f.stage == 0) {
+            f.stage = 1;
+            if (f.i <= k - 1) {
+                st.push_back({f.i, k - 1, 0, 0, false});
+            }
+        } 
+        else if (f.stage == 1) {
+            f.stage = 2;
+            if (k + 1 <= f.j) {
+                st.push_back({k + 1, f.j, 0, 0, false});
+            }
+        } 
+        else { 
+            st.pop_back();
+            return k;
+        }
+    }
+    return -1;
+}
+
+
+
+bool is_candidate_better_lex(int i, int j, int best_k, int cand_k, const std::vector<std::vector<int>> &choice) {
+    std::vector<IteratorState> st_best;
+    st_best.push_back({i, j, best_k, 0, true});
+
+
+    std::vector<IteratorState> st_cand;
+    st_cand.push_back({i, j, cand_k, 0, true});
+
+    while (true) {
+        int x = next_index(choice, st_best);
+        int y = next_index(choice, st_cand);
+
+        if (x == -1 && y == -1) {
+            // sequências iguais
+            return false;  // candidato não é estritamente menor
+        }
+        if (x == -1) {
+            // best acabou primeiro → best é lexicograficamente menor
+            return false;
+        }
+        if (y == -1) {
+            // cand acabou primeiro → cand é lexicograficamente menor
+            return true;
+        }
+
+        if (y < x) return true;   // candidato melhor (vem antes)
+        if (y > x) return false;  // candidato pior (vem depois)
+
+        // se forem iguais, continua para o próximo índice
+    }
+}
 
 /*struct KeepTrack {
     std::string numList;
@@ -186,7 +258,7 @@ int main(){
                     best_val = curr;
                     best_k = k;
                 }
-                else if (curr == best_val){     //caso seja igual o valor escolhe o k que a ordem é lexicalmente menor
+                /*else if (curr == best_val){     //caso seja igual o valor escolhe o k que a ordem é lexicalmente menor
                     std::vector<int> seq_new;
                     seq_new.reserve(j - i + 1);
                     build_order(i, k - 1, choice, seq_new);
@@ -202,8 +274,13 @@ int main(){
                     if(seq_new < seq_old) {
                         best_k = k;
                     }
-                }
+                }*/
+                else if (curr == best_val && best_k != -1) {
+                    if (is_candidate_better_lex(i, j, best_k, k, choice)) {
+                        best_k = k;
+                    }
                 
+                }
             }
             best[i][j] = best_val;
             choice[i][j] = best_k;
@@ -225,3 +302,4 @@ int main(){
     printf("\n");
     return 0;
 }
+
